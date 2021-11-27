@@ -30,7 +30,7 @@ Visão mobile:
 
 ![](/src/assets/mobile.png)
 
-## Meta
+## Autor
 
 Maikon Camilo Gosch –  Maikon Camilo Gosch
 
