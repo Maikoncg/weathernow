@@ -26,6 +26,10 @@ npm run serve
 Com esta aplicação, o usuário conseguirá visualizar a temperatura destas cidades em qualquer lugar, já que a mesma é totalmente responsiva e de fácil utilização.
 Ao entrar na aplicação o usuário já conseguirá visualizar as informações do clima das cidades sem precisar fazer qualquer tipo de ação.
 
+Visão mobile:
+
+![](/src/assets/mobile.png)
+
 ## Meta
 
 Maikon Camilo Gosch –  Maikon Camilo Gosch
