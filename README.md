@@ -1,29 +1,36 @@
-# weathernow
+# Weathernow
+> Aplicação para exibir temperatura de 3 cidades diferentes.
 
-## Project setup
+[![NPM Version][npm-image]][npm-url]
+
+A aplicação exibe a temperatura atual de Nuuk/GL, Urubici/BR e Nairobi/KE, assim como outros detalhes sobre o clima das cidades, atualizando sempre a cada 10 minutos.
+
+![](/src/assets/home.png)
+
+## Configuração de desenvolvimento
+
+```sh
+git clone https://github.com/Maikoncg/weathernow.git
 ```
+
+```sh
 npm install
 ```
 
-### Compiles and hot-reloads for development
-```
+Compile:
+
+```sh
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Utilização
 
-### Run your unit tests
-```
-npm run test:unit
-```
+Com está aplicação, o usuário conseguirá visualizar a temperatura destas cidades em qualquer lugar, já que a mesma é totalmente responsiva e de fácil utilização.
+Ao entrar na aplicação o usuário já conseguirá visualizar as informações do clima das cidades sem precisar fazer qualquer tipo de ação.
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Meta
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Maikon Camilo Gosch –  Maikon Camilo Gosch
+
+[https://github.com/Maikoncg]
+

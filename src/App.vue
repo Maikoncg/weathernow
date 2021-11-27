@@ -4,10 +4,12 @@
 
 <style>
 #app {
-  font-family: sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: Helvetica, Arial;
   text-align: center;
   color: #2c3e50;
+}
+* {
+  margin: 0;
+  padding: 0;
 }
 </style>
