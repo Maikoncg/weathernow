@@ -25,6 +25,11 @@ Compilação:
 npm run serve
 ```
 
+Testes unitários:
+
+```sh
+npm run test:unit
+```
 ## Utilização
 
 Com esta aplicação, o usuário conseguirá visualizar a temperatura destas cidades em qualquer lugar, já que a mesma é totalmente responsiva e de fácil utilização.

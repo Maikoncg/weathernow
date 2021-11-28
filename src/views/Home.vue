@@ -71,7 +71,6 @@ export default {
 
       this.cities.forEach((item, index) => {
         if (this.citiesInfo[index].cod === 200) {
-          console.log(this.citiesInfo[index]);
           this.setLocalStorageData();
         }
         this.loading[index] = false;
@@ -81,9 +80,11 @@ export default {
     async fetchByCity(city, index) {
       this.loading[index] = true;
       const cityData = await this.fetch(city);
-      if (this.cityData?.cod === 200) {
+
+      if (cityData.cod === 200) {
         this.updatedLocalStorageData(cityData, index);
       }
+
       this.citiesInfo[index] = cityData;
       this.loading[index] = false;
     },
