@@ -120,45 +120,34 @@ export default {
 </script>
 
 <style scoped>
-@media (min-width: 600px) {
-  .cities-container {
-    background: #f1f1f1;
-    border: 1px solid #ebebeb;
-    width: 1024px;
-    height: 835px;
-    margin: 0 auto;
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-  }
-
-  .img-logo {
-    margin-top: 15px;
-  }
+.cities-container {
+  background: #f1f1f1;
+  align-items: center;
+  justify-content: space-evenly;
+  display: grid;
+  padding-top: 80px;
 }
 
-@media (max-width: 600px) {
-  .scrollable-topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: block;
-    background-color: #ffffff;
-    z-index: 2;
-  }
+.scrollable-topbar {
+  position: fixed;
+  z-index: 2;
+  width: 100%;
+  height: 55px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .img-logo {
-    margin: 15px 0 10px 0;
-  }
-
+@media (min-width: 600px) {
   .cities-container {
-    background: #f1f1f1;
-    align-items: center;
-    justify-content: space-evenly;
-    display: grid;
-    padding-top: 80px;
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    position: absolute;
+    padding-top: 0px;
   }
 }
 </style>
