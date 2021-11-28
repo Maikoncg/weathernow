@@ -1,69 +1,66 @@
 <template>
-  <div class="CityCard" >
-    <div
-      @mouseover="mouseover(cityInfo?.id)"
-      @mouseleave="mouseleave(cityInfo?.id)"
-    >
-      <div class="city-header">
-        {{ cityName }}
+  <div class="CityCard" :class="{ 'force-hover': forceHover }">
+    <div class="city-header">
+      {{ cityName }}
+    </div>
+
+    <div v-if="loading">
+      <img
+        class="city-loader"
+        alt="weathernow loader"
+        src="../assets/loader.svg"
+        height="50"
+      />
+    </div>
+
+    <div v-else-if="cityInfo?.main?.temp">
+      <div
+        class="city-temperature"
+        :style="`color: ${temperatureColor(cityInfo.main?.temp)}`"
+      >
+        {{ convertKelvinToCelsius(cityInfo.main?.temp) }}
+        <div class="degrees">°</div>
       </div>
 
-      <div v-if="loading">
-        <img
-          class="city-loader"
-          alt="weathernow loader"
-          src="../assets/loader.svg"
-          height="50"
-        />
-      </div>
-
-      <div v-else-if="cityInfo?.main?.temp">
-        <div
-          class="city-temperature"
-          :style="`color: ${temperatureColor(cityInfo.main?.temp)}`"
-        >
-          {{ convertKelvinToCelsius(cityInfo.main?.temp) }}
-          <div class="degrees">°</div>
-        </div>
-
-        <div class="city-footer">
-          <div class="city-humidity">
-            <div>HUMIDITY</div>
-            <div class="humidity-value">
-              {{ cityInfo.main?.humidity }}
-              <span class="abb">%</span>
-            </div>
-          </div>
-          <div class="city-pressure">
-            <div>PRESSURE</div>
-            <div class="pressure-value">
-              {{ cityInfo.main?.pressure }}
-              <label class="abb">hPa</label>
-            </div>
-          </div>
-          <div class="city-date">
-            {{ formatDate() }}
+      <div class="city-footer">
+        <div class="city-humidity">
+          <div>HUMIDITY</div>
+          <div class="humidity-value">
+            {{ cityInfo.main?.humidity }}
+            <span class="abb">%</span>
           </div>
         </div>
+        <div class="city-pressure">
+          <div>PRESSURE</div>
+          <div class="pressure-value">
+            {{ cityInfo.main?.pressure }}
+            <label class="abb">hPa</label>
+          </div>
+        </div>
+        <div class="city-date">
+          {{ formatDate(updatedAt || cityInfo.dt) }}
+        </div>
       </div>
+    </div>
 
-      <div v-else class="city-error">
-        <label class="error-message">Something went wrong</label>
-        <button @click="tryAgain(cityName)" class="error-button">
-          Try Again
-        </button>
-      </div>
+    <div v-else class="city-error">
+      <label class="error-message">Something went wrong</label>
+      <button @click="tryAgain(cityName)" class="error-button">
+        Try Again
+      </button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  emits: ["fetchCity", "fetchCities"],
+  emits: ["fetchCity"],
   props: {
     cityInfo: Object,
-    loading: Object,
     cityName: String,
+    loading: Boolean,
+    forceHover: Boolean,
+    updatedAt: Number,
   },
 
   data: () => {
@@ -95,8 +92,9 @@ export default {
       return time;
     },
 
-    formatDate() {
-      var date = new Date();
+    formatDate(timestamp) {
+      let date = new Date(null);
+      date.setSeconds(timestamp);
       const hours = this.formatTime(date.getHours());
       const minutes = this.formatTime(date.getMinutes());
       const seconds = this.formatTime(date.getSeconds());
@@ -108,34 +106,6 @@ export default {
 
     tryAgain(cityName) {
       this.$emit("fetchCity", cityName);
-    },
-
-    fetchCities() {
-      setTimeout(() => {
-        localStorage.removeItem("cities");
-        localStorage.setItem("cities", JSON.stringify(this.citiesInfo));
-        this.$emit("fetchCities", true);
-      }, 10000 * 60);
-    },
-
-    mouseover(cityId) {
-      Object.keys(this.hover).map((key) => {
-        if (this.hover[key]) {
-          this.hover[key] = false;
-        }
-      });
-      this.hover[cityId] = true;
-    },
-
-    mouseleave(cityId) {
-      this.hover[cityId] = true;
-    },
-  },
-
-  watch: {
-    cityInfo() {
-      console.log(123);
-      this.fetchCities();
     },
   },
 };
@@ -197,6 +167,13 @@ export default {
 .CityCard:hover .city-footer .city-humidity,
 .CityCard:hover .city-footer .city-pressure {
   display: block;
+  padding-bottom: 10px;
+}
+
+.CityCard.force-hover .city-footer .city-humidity,
+.CityCard.force-hover .city-footer .city-pressure {
+  display: block;
+  padding-bottom: 10px;
 }
 
 .CityCard .city-footer .humidity-value,
@@ -245,11 +222,10 @@ export default {
 
   .CityCard .city-footer {
     border-top: 1px solid #ebebeb;
-    min-height: 75px;
     background: #f1f1f1;
     opacity: 50%;
     display: grid;
-    grid-template-rows: 45px auto auto 20px auto;
+
     font-size: 12px;
     padding-top: 15px;
   }

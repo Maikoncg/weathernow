@@ -15,6 +15,8 @@
         :cityInfo="cityData"
         :cityName="cities[index]"
         :loading="loading[index]"
+        :forceHover="index === 1"
+        :updatedAt="updatedAt"
         v-on:fetchCity="fetchByCity($event, index)"
       />
     </div>
@@ -32,6 +34,7 @@ export default {
       cities: ["Nuuk, GL", "Urubici, BR", "Nairobi, KE"],
       promises: [],
       loading: {},
+      updatedAt: null,
     };
   },
 
@@ -40,12 +43,19 @@ export default {
   },
 
   created() {
-    this.loadCitiesData();
     this.updateEachTenMinutes();
+    const cities = window.localStorage.getItem("cities");
+
+    if (!cities) {
+      this.loadCitiesData();
+    } else {
+      this.getLocalStorageData(cities);
+    }
   },
 
   methods: {
     fetch(city) {
+      this.updatedAt = new Date().getTime() / 1000;
       return fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${this.appid}`
       ).then((response) => response.json());
@@ -58,7 +68,12 @@ export default {
       });
 
       this.citiesInfo = await Promise.all(this.promises);
+
       this.cities.forEach((item, index) => {
+        if (this.citiesInfo[index].cod === 200) {
+          console.log(this.citiesInfo[index]);
+          this.setLocalStorageData();
+        }
         this.loading[index] = false;
       });
     },
@@ -66,13 +81,38 @@ export default {
     async fetchByCity(city, index) {
       this.loading[index] = true;
       const cityData = await this.fetch(city);
+      if (this.cityData?.cod === 200) {
+        this.updatedLocalStorageData(cityData, index);
+      }
       this.citiesInfo[index] = cityData;
       this.loading[index] = false;
     },
 
     updateEachTenMinutes() {
-      const tenMinutes = 60000;
-      window.setInterval(this.loadCitiesData, tenMinutes);
+      const tenMinutes = 600000;
+      window.setInterval(() => {
+        this.loadCitiesData();
+
+        let requestError = this.citiesInfo.find((city) => city.cod !== 200);
+        if (!requestError) {
+          this.setLocalStorageData();
+        }
+      }, tenMinutes);
+    },
+
+    getLocalStorageData(cities) {
+      this.citiesInfo = JSON.parse(cities);
+    },
+
+    setLocalStorageData() {
+      window.localStorage.setItem("cities", JSON.stringify(this.citiesInfo));
+    },
+
+    updatedLocalStorageData(cityData, index) {
+      const cities = window.localStorage.getItem("cities");
+      const parsedData = JSON.parse(cities);
+      parsedData[index] = cityData;
+      window.localStorage.setItem("cities", JSON.stringify(parsedData));
     },
   },
 };

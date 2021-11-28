@@ -5,6 +5,10 @@ A aplicação exibe a temperatura atual de Nuuk/GL, Urubici/BR e Nairobi/KE, ass
 
 ![](/src/assets/home.png)
 
+## API
+
+https://openweathermap.org/
+
 ## Configuração de desenvolvimento
 
 ```sh
