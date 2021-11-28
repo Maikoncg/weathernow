@@ -112,21 +112,6 @@ export default {
 </script>
 
 <style scoped>
-@media (max-width: 600px) {
-  .CityCard {
-    margin: 0 0 30px 0;
-  }
-
-  .CityCard .city-footer {
-    border-top: 1px solid #ebebeb;
-    background: #f1f1f1;
-    opacity: 50%;
-    display: grid;
-    font-size: 12px;
-    padding-top: 15px;
-  }
-}
-
 .CityCard {
   color: #737c84;
   background-color: #ffffff;
@@ -229,5 +214,20 @@ export default {
   border-color: #737c84;
   margin-top: 20px;
   cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .CityCard {
+    margin: 0 0 30px 0;
+  }
+
+  .CityCard .city-footer {
+    border-top: 1px solid #ebebeb;
+    background: #f1f1f1;
+    opacity: 50%;
+    display: grid;
+    font-size: 12px;
+    padding-top: 15px;
+  }
 }
 </style>
