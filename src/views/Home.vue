@@ -10,10 +10,12 @@
     </div>
     <div class="cities-container">
       <CityCard
-        v-on:fetchCity="fetch($event)"
-        v-on:fetchCities="citiesPromises()"
-        :cityInfo="citiesInfo"
-        :loading="loading"
+        v-for="(cityData, index) of citiesInfo"
+        :key="cityData.id"
+        :cityInfo="cityData"
+        :cityName="cities[index]"
+        :loading="loading[index]"
+        v-on:fetchCity="fetchByCity($event, index)"
       />
     </div>
   </div>
@@ -29,7 +31,7 @@ export default {
       citiesInfo: [],
       cities: ["Nuuk, GL", "Urubici, BR", "Nairobi, KE"],
       promises: [],
-      loading: false,
+      loading: {},
     };
   },
 
@@ -37,33 +39,40 @@ export default {
     CityCard,
   },
 
-  mounted() {
-    this.citiesPromises();
+  created() {
+    this.loadCitiesData();
+    this.updateEachTenMinutes();
   },
 
   methods: {
     fetch(city) {
-      this.loading = true;
-      this.promises.push(
-        fetch(`
-        https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${this.appid}`)
-      );
+      return fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${this.appid}`
+      ).then((response) => response.json());
     },
 
-    citiesPromises() {
-      this.cities.map(async (city, index) => {
-        this.fetch(city);
-
-        this.citiesInfo = [];
-        await Promise.all(this.promises).then((data) => {
-          data[index].json().then((cityInfo) => {
-            this.citiesInfo.push({ [city]: cityInfo });
-            this.loading = false;
-            localStorage.setItem("cities", JSON.stringify(this.citiesInfo));
-          });
-        });
-        this.promises = [];
+    async loadCitiesData() {
+      this.promises = this.cities.map((city, index) => {
+        this.loading[index] = true;
+        return this.fetch(city);
       });
+
+      this.citiesInfo = await Promise.all(this.promises);
+      this.cities.forEach((item, index) => {
+        this.loading[index] = false;
+      });
+    },
+
+    async fetchByCity(city, index) {
+      this.loading[index] = true;
+      const cityData = await this.fetch(city);
+      this.citiesInfo[index] = cityData;
+      this.loading[index] = false;
+    },
+
+    updateEachTenMinutes() {
+      const tenMinutes = 60000;
+      window.setInterval(this.loadCitiesData, tenMinutes);
     },
   },
 };

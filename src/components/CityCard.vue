@@ -1,6 +1,9 @@
 <template>
-  <div class="CityCard" v-for="(cities, key) in cityInfo" :key="key">
-    <div v-for="(city, cityName) in cities" :key="city.id">
+  <div class="CityCard" >
+    <div
+      @mouseover="mouseover(cityInfo?.id)"
+      @mouseleave="mouseleave(cityInfo?.id)"
+    >
       <div class="city-header">
         {{ cityName }}
       </div>
@@ -14,12 +17,12 @@
         />
       </div>
 
-      <div v-else-if="city.main?.temp">
+      <div v-else-if="cityInfo?.main?.temp">
         <div
           class="city-temperature"
-          :style="`color: ${temperatureColor[cityName]}`"
+          :style="`color: ${temperatureColor(cityInfo.main?.temp)}`"
         >
-          {{ formatTemperature(cityName, city.main?.temp) }}
+          {{ convertKelvinToCelsius(cityInfo.main?.temp) }}
           <div class="degrees">°</div>
         </div>
 
@@ -27,18 +30,20 @@
           <div class="city-humidity">
             <div>HUMIDITY</div>
             <div class="humidity-value">
-              {{ city.main?.humidity }}
+              {{ cityInfo.main?.humidity }}
               <span class="abb">%</span>
             </div>
           </div>
           <div class="city-pressure">
             <div>PRESSURE</div>
             <div class="pressure-value">
-              {{ city.main?.pressure }}
+              {{ cityInfo.main?.pressure }}
               <label class="abb">hPa</label>
             </div>
           </div>
-          <div class="city-date">{{ formatDate() }}</div>
+          <div class="city-date">
+            {{ formatDate() }}
+          </div>
         </div>
       </div>
 
@@ -57,27 +62,30 @@ export default {
   emits: ["fetchCity", "fetchCities"],
   props: {
     cityInfo: Object,
-    loading: Boolean,
+    loading: Object,
+    cityName: String,
   },
 
   data: () => {
     return {
-      temperatureColor: {},
+      hover: {},
     };
   },
 
   methods: {
-    formatTemperature(cityName, temp) {
+    convertKelvinToCelsius(temp) {
       const celsius = temp - 273.15;
-      if (celsius <= 5) {
-        this.temperatureColor[cityName] = "#69a3ff";
-      } else if (celsius <= 25) {
-        this.temperatureColor[cityName] = "#ff9632";
-      } else {
-        this.temperatureColor[cityName] = "#ed1946";
-      }
-
       return `${celsius.toFixed(0)}`;
+    },
+
+    temperatureColor(temp) {
+      if (temp <= 278.15) {
+        return "#69a3ff";
+      } else if (temp <= 298.15) {
+        return "#ff9632";
+      } else {
+        return "#ed1946";
+      }
     },
 
     formatTime(time) {
@@ -109,10 +117,24 @@ export default {
         this.$emit("fetchCities", true);
       }, 10000 * 60);
     },
+
+    mouseover(cityId) {
+      Object.keys(this.hover).map((key) => {
+        if (this.hover[key]) {
+          this.hover[key] = false;
+        }
+      });
+      this.hover[cityId] = true;
+    },
+
+    mouseleave(cityId) {
+      this.hover[cityId] = true;
+    },
   },
 
   watch: {
     cityInfo() {
+      console.log(123);
       this.fetchCities();
     },
   },
@@ -126,7 +148,7 @@ export default {
   border-radius: 5px;
   border: 1px solid #ebebeb;
   width: 250px;
-  height: 270px;
+  height: auto;
   box-shadow: 8px 8px 10px -10px rgba(51, 51, 51, 0.1);
 }
 
@@ -137,7 +159,7 @@ export default {
 }
 
 .CityCard .city-loader {
-  margin-top: 80px;
+  margin: 50px 50px;
 }
 
 .CityCard .city-temperature {
@@ -153,24 +175,28 @@ export default {
 
 .CityCard .city-footer {
   border-top: 1px solid #ebebeb;
-  height: 200px;
-  min-height: 250px;
   background: #f1f1f1;
   opacity: 50%;
   display: grid;
-  grid-template-rows: auto 160px auto 20px auto;
   font-size: 12px;
-  padding-top: 15px;
+  padding: 15px 0 15px 0;
 }
 
 .CityCard .city-footer .city-humidity {
   grid-column-start: 1;
   grid-column-end: 1;
+  display: none;
 }
 
 .CityCard .city-footer .city-pressure {
   grid-column-start: 2;
   grid-column-end: 2;
+  display: none;
+}
+
+.CityCard:hover .city-footer .city-humidity,
+.CityCard:hover .city-footer .city-pressure {
+  display: block;
 }
 
 .CityCard .city-footer .humidity-value,
@@ -194,7 +220,7 @@ export default {
 }
 
 .CityCard .city-error {
-  padding-top: 70px;
+  padding: 40px 40px;
 }
 
 .CityCard .error-message {
@@ -219,7 +245,6 @@ export default {
 
   .CityCard .city-footer {
     border-top: 1px solid #ebebeb;
-    height: 75px;
     min-height: 75px;
     background: #f1f1f1;
     opacity: 50%;
